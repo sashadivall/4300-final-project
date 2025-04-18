@@ -15,7 +15,7 @@ DATA_FOLDER = "data"
 # How frequently to upload a file, in seconds
 UPLOAD_INTERVAL = 3
 # Total number of uploads to perform
-NUM_UPLOADS = 4
+NUM_UPLOADS = 1
 # The name of the s3 bucket you're uploading to
 S3_BUCKET_NAME = "4300-finalproject-preprocessed-sdivall"
 
@@ -44,11 +44,11 @@ def upload_to_s3(s3_client, file_path, bucket_name):
     try:
         with open(file_path, "rb") as file:
             s3_client.upload_fileobj(
-                file, bucket_name, f"uploads/{Path(file_path).name}"
+                file, bucket_name, f"{Path(file_path).name}"
             )
-        print(f"Successfully uploaded {file_path.name} to S3")
+        print(f"Successfully uploaded {Path(file_path).name} to S3")
     except Exception as e:
-        print(f"Error uploading {file_path.name}: {str(e)}")
+        print(f"Error uploading {Path(file_path).name}: {str(e)}")
 
 
 def main():
@@ -83,7 +83,7 @@ def main():
         count_uploads += 1
         try:
             file_path = list(os.listdir(DATA_FOLDER))[0]
-            upload_to_s3(s3_client, file_path, aws_credentials["s3_bucket_name"])
+            upload_to_s3(s3_client, f"data/{file_path}", aws_credentials["s3_bucket_name"])
 
             # Wait for the specified interval
             time.sleep(UPLOAD_INTERVAL)
